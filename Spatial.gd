@@ -3,14 +3,15 @@ extends Spatial
 var arvrinterface = null
 var arvrinterfacename = "none"
 
-var k1;
-var k2;
-var display_to_lens;
-var display_width;
-var eye_height;
-var iod;
-var oversample;
-var dihedral;
+var k1
+var k2
+var display_to_lens
+var display_width
+var eye_height
+var iod
+var oversample
+var dihedral
+var transparent_bg
 
 func checkloadinterface(larvrinterfacename):
 	var available_interfaces = ARVRServer.get_interfaces()
@@ -32,16 +33,24 @@ func _ready():
 			var viewport = get_viewport()
 			viewport.arvr = true
 			viewport.render_target_v_flip = false # <---- for your upside down screens
-			#viewport.transparent_bg = true       # <--- For the AR
-			arvrinterface.k1 = 0.5          # Lens distortion constants
-			arvrinterface.k2 = 0.23
-			#arvrinterface.display_to_lens
-			#arvrinterface.display_width
-			#arvrinterface.eye_height
-			#arvrinterface.iod
-			#arvrinterface.oversample
+			viewport.transparent_bg = true       # <--- For the AR
 
+			#
+			# AJL - Rough parameters for NorthStar from my testing
+			# 		I've only looked at dihedral and iod to 0.1 granularity so far
+			#
+			arvrinterface.k1 = 0.5
+			arvrinterface.k2 = 0.23
+			arvrinterface.display_to_lens = 4
+			arvrinterface.display_width = 14.5
+			arvrinterface.eye_height = 1.85
+			arvrinterface.iod = 5.200001
+			arvrinterface.oversample = 1.5
+			arvrinterface.dihedral = 0.4
+		
+			#
 			# Store parameters for reset function
+			#
 			k1 = arvrinterface.k1
 			k2 = arvrinterface.k2
 			display_to_lens = arvrinterface.display_to_lens
@@ -50,7 +59,8 @@ func _ready():
 			iod = arvrinterface.iod
 			oversample = arvrinterface.oversample
 			dihedral = arvrinterface.dihedral
-						
+			transparent_bg = viewport.transparent_bg
+			
 func _input(event):
 	
 	if Input.is_action_pressed("cube_left"):
@@ -112,6 +122,7 @@ func _input(event):
 		print("		H - this help text")
 		print("		C - reset parameters")
 		print("		V - view parameter values")
+		print("		T - toggle background transparency")
 		print("		Left Arrow - move cube left (x)")
 		print("		Right Arrow - move cube right (y)")
 		print("		Up Arrow - move cube up (y)")
@@ -157,4 +168,6 @@ func _input(event):
 			print("		iod = " + String(arvrinterface.iod))
 			print("		oversample = " + String(arvrinterface.oversample))
 			print("		dihedral = " + String(arvrinterface.dihedral))
-
+	elif Input.is_action_pressed("toggle_background"):
+			var viewport = get_viewport()
+			viewport.transparent_bg = !viewport.transparent_bg
