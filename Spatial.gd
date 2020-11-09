@@ -35,6 +35,11 @@ func _ready():
 			viewport.render_target_v_flip = false # <---- for your upside down screens
 			viewport.transparent_bg = true       # <--- For the AR
 
+			# If we have two screens then display in fullscreen on the second
+			if(OS.get_screen_count() == 2):
+				OS.set_current_screen(1)
+				OS.set_window_fullscreen(true)
+			
 			#
 			# AJL - Rough parameters for NorthStar from my testing
 			# 		I've only looked at dihedral and iod to 0.1 granularity so far
